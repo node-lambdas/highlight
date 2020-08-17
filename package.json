@@ -1,8 +1,11 @@
 {
-  "name": "@node-lambdas/highlightjs",
+  "name": "@node-lambdas/highlight",
   "version": "1.0.0",
   "type": "module",
   "publishConfig": {
     "access": "public"
+  },
+  "dependencies": {
+    "highlight.js": "^10.1.2"
   }
 }
