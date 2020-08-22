@@ -1,4 +1,5 @@
 import { lambda, Format } from '@node-lambdas/core';
+import { promises } from 'fs';
 import hljs from 'highlight.js';
 
 const configutation = {
@@ -7,15 +8,34 @@ const configutation = {
   output: Format.Text,
 };
 
-lambda(configutation, (input, output) => {
-  const language = input.headers['x-language'];
+const matchLanguage = /^\/lang\/(.+?)$/;
+let embedTemplate;
 
-  if (language) {
-    try {
-      output.send(hljs.highlight(language, input.body).value);
-      return;
-    } catch {}
+const getEmbedTemplate = async () => {
+  if (!embedTemplate) {
+    embedTemplate = await promises.readFile('./embed.html');
   }
 
-  output.send(hljs.highlightAuto(input.body).value);
+  return embedTemplate;
+};
+
+lambda(configutation, (input, output) => {
+  input.pipe(output);
+  console.log(input.url);
+  // const url = new URL(input.url);
+  // const embed = !!url.searchParams.get('embed');
+  // const template = embed ? getEmbedTemplate() : '%code%';
+
+  // console.log(url, embed);
+  // const language = matchLanguage(url.pathname);
+  // return output.send(200, '');
+
+  // if (language) {
+  //   try {
+  //     output.send(hljs.highlight(language, input.body).value);
+  //     return;
+  //   } catch {}
+  // }
+
+  // output.send(hljs.highlightAuto(input.body).value);
 });
